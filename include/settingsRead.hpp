@@ -4,7 +4,7 @@ Leer configuración parámetros WIFI
 
 bool settingsReadWifi(){
     StaticJsonDocument<500> jsonConfig;
-    File file = SPIFFS.open("/SettingWifi.json", "r");
+    File file = SPIFFS.open("/settingwifi.json", "r");
     if(deserializeJson(jsonConfig, file)){
         // Si falla la lectura inicial de valores por defecto
         SettingResetWiFi();
@@ -37,3 +37,58 @@ bool settingsReadWifi(){
         return true;
     }
 }
+
+
+/*
+    Lee la configuración MQTT
+*/
+
+
+boolean settingsReadMQTT(){
+
+    StaticJsonDocument<500> jsonConfig;
+    File file = SPIFFS.open(F("/settingmqtt.json"), "r");
+    if (deserializeJson(jsonConfig, file))
+    {
+        //Si falla la lectura asume valores por defecto
+        setingsResetMQTT();
+        log(F("Error: Falló la lectura de la configuración MQTT, tomando valores por defecto"));
+        return false;
+    }else{
+        // Si lee el archivo
+    }
+    strlcpy(mqtt_user, jsonConfig["mqtt_user"], sizeof(mqtt_user));
+    strlcpy(mqtt_passw, jsonConfig["mqtt_passw"], sizeof(mqtt_passw));
+    strlcpy(mqtt_server, jsonConfig["mqtt_user"], sizeof(mqtt_user));
+    strlcpy(mqtt_id, jsonConfig["mqtt_id"], sizeof(mqtt_id));
+    mqtt_time = jsonConfig["mqtt_time"];
+    mqtt_port = jsonConfig["mqtt_port"];
+    mqtt_enable = jsonConfig["mqtt_enable"];
+    file.close();
+    log(F("Info: Lectura de configuración MQTT correcta"));
+    return true;
+    
+
+}
+/*
+    Lectura configuración IO
+*/
+
+ boolean settingsReadRelays(){
+    StaticJsonDocument<200> jsonConfig;
+    File file = SPIFFS.open("/settingrelay.json", "r");
+    if (deserializeJson(jsonConfig, file))
+    {
+        // Si falla la lectura carga valores por defecto
+        settingsResettRelay();
+        log("Error: Falló lectura de la configuración de los relevos, tomando valores por defecto");
+        return false;
+    }else{
+        relay_01_status = jsonConfig["relay_01_status"];
+        relay_02_status = jsonConfig["relay_02_status"];
+        file.close();
+        log("Info: Lectura de la configuración IO Correcta");
+        return true;
+    }
+
+ }

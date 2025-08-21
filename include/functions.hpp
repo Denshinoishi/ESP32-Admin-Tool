@@ -1,4 +1,10 @@
 #include "ledBlink.hpp"
+#include <esp32-hal.h>
+
+
+
+
+
 
 /*
 Genera un log en el puerto serial
@@ -69,10 +75,10 @@ void setupPinOut(){
     pinMode(MQTTLED, OUTPUT);
     pinMode(RELAY1, OUTPUT);
     pinMode(RELAY2, OUTPUT);
-    digitalWrite(WIFILED, LOW);
-    digitalWrite(MQTTLED, LOW);
-    digitalWrite(RELAY1, LOW);
-    digitalWrite(RELAY2, LOW);
+    setOffSingle(WIFILED);
+    setOffSingle(MQTTLED);
+    setOffSingle(RELAY1);
+    setOffSingle(RELAY2);
 }
 
 
@@ -80,4 +86,34 @@ void setupPinOut(){
 
 void setupSerialPort() {
     Serial2.begin(9600, SERIAL_8N1, RS232_RX, RS232_TX);
+}
+
+
+/*
+Calidad WIFI
+*/
+
+int getRSSIasQuality(int RSSI){
+    int quality = 0;
+    if (RSSI <= -100)
+    {
+        quality = 0;
+    }else if (RSSI >= -50)
+    {
+        quality = 100;
+    }else{
+        quality = 2 * (RSSI + 100);
+    }
+    
+    return quality;
+}
+
+
+
+/*
+    Temperatura CPU
+*/
+
+float TempCPUValue(){
+    return temperatureRead(); // ya viene definido
 }

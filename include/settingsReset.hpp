@@ -25,3 +25,27 @@ void SettingResetWiFi(){
         ap_connect = 4;
         
 }
+
+/*
+Valores por defecto MQTT
+*/
+void setingsResetMQTT(){
+    //Define configuración por defecto del equipo conexión MQTT
+    strlcpy(mqtt_user, "", sizeof(mqtt_user));
+    strlcpy(mqtt_passw, "", sizeof(mqtt_passw));
+    strlcpy(mqtt_server, "192.168.0.168", sizeof(mqtt_server));
+    strlcpy(mqtt_id, deviceID().c_str(), sizeof(mqtt_id));
+    mqtt_time = 60000;
+    mqtt_port = 1883;
+    mqtt_enable = true;
+}
+
+/*
+Valores default IO
+*/
+
+void settingsResettRelay(){
+    relay_01_status = LOW;
+    relay_02_status = LOW;
+
+}

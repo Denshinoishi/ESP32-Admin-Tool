@@ -41,7 +41,23 @@ char    ap_passw[63];                //  Pasword AP
 int     ap_canal;                    //  Canal AP
 int     ap_hidden;                   //  Visibilidad del AP (0 - Visible 1 - Oculto) 
 int     ap_connect;                  //  Número de conexiones del AP
- /*
+/*
+MQTT
+*/
+boolean mqtt_enable;                //  Habilitar MQTT Broker
+char    mqtt_user[30];              //  Usuario MQTT Broker
+char    mqtt_id[30];                //  ID MQTT Broker
+char    mqtt_passw[30];             //  Pasword MQTT Broker
+char    mqtt_server[39];            //  Servidor MQTT Broker
+int     mqtt_port;                  //  Puerto Servidor MQTT Broker
+int     mqtt_time;                  //  Tiempo de envio por MQTT Broker
+/*
  Otros
  */
 uint8_t ip[4];                      // Variabla función convertir char a IP
+float TempCPU;                      // Temperatura de la CPU en °C
+/*
+IO
+*/
+boolean relay_01_status;
+boolean relay_02_status;

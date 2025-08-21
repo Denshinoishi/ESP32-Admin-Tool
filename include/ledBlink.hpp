@@ -72,3 +72,41 @@ void setOnSingle(int _pin){
 void setOffSingle(int _pin){
     digitalWrite(_pin, LOW);
 }
+
+
+/*
+    Conmutación LED MQTT Transmisión
+*/
+
+void mqttTX(){
+    for (int i = 0; i < 2; i++)
+    {
+        setOnSingle(MQTTLED);
+        delay(50);
+        setOffSingle(MQTTLED);
+        delay(10);
+    }
+    
+}
+/*
+    Conmutación de LED MQTT Recepción
+}*/
+void mqttRX(){
+
+    for (int i = 0; i < 1; i++)
+    {
+        blinkRandomSingle(5, 50, MQTTLED);
+        delay(50);
+    }
+      
+
+}
+
+
+
+// On/Off Status 
+
+void setOnOff(int _pin, boolean status){
+    digitalWrite(_pin, status ? HIGH : LOW);
+
+}
