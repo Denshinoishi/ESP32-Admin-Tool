@@ -110,3 +110,18 @@ void setOnOff(int _pin, boolean status){
     digitalWrite(_pin, status ? HIGH : LOW);
 
 }
+
+
+void leds(){
+    for (int i = 0; i < 4; i++)
+    {
+        setOnSingle(MQTTLED);
+        setOnSingle(WIFILED);
+        delay(100);
+        setOffSingle(MQTTLED);
+        setOffSingle(WIFILED);
+        delay(100);
+    }
+    
+}
+

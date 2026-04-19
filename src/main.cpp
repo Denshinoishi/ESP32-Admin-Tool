@@ -1,7 +1,15 @@
+
+
+/*
+  Librerias
+*/
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
-
+#include <TimeLib.h>
+/*
+  Archivos .hpp
+*/
 #include "settings.hpp"
 #include "functions.hpp"
 #include "settingsReset.hpp"
@@ -9,6 +17,10 @@
 #include "settingsSave.hpp"
 #include "esp32_wifi.hpp"
 #include "esp32_mqtt.hpp"
+#include "esp32_api.hpp"
+#include "esp32_websoket.hpp"
+#include "esp32_server.hpp"
+
 
 void setup()
 {
@@ -31,21 +43,46 @@ void setup()
     while (true)
       ;
   }
-  // Lee la configuración del WiFi
-  settingsReadWifi();
-  
   // Lee la configuración de Salidas
-  settingsReadRelays();
+  if(!settingsReadRelays()){
+    // Guarda la configuración de Salidas por Primera Vez
+    settingsSaveRelays();
+  }
   // Configuración IO
   setOnOff(RELAY1, relay_01_status);
   setOnOff(RELAY2, relay_02_status);
+  // Lee la configuración del WiFi
+  if(!settingsReadWifi()){
+    // Guarda la configuración Wifi por Primera Vez
+    settingsSaveWiFi();
+  };
+  // Incrementar el contador de booteos
+  bootCount ++;
+  // Guardar la configuración WiFi completa por el Contador de Booteos
+  settingsSaveWiFi();
+  
   // Configuración del WiFi
   WiFi.disconnect(true);
   delay(1000);
   // Setup WiFi
   wifi_setup();
   // Lee la configuración del MQTT
-  settingsReadMQTT();
+  if(!settingsReadMQTT()){
+    // Guarda la configuración MQTT por Primera Vez
+    settinsSaveMQTT();
+  }
+  // Leer Credenciales
+  if(!settingsReadAdmin()){
+    // Guarda la configuración de administrador por Primera Vez
+    settinsSaveAdmin();
+  }
+  // Inicializar el Servidor
+  InitServer();
+  // Devuelve el listado de archivos y directorios en la raiz
+  //listDir(SPIFFS, "/" , 0);
+  log("Info: Setup Completado");
+
+  
 }
 
 void loop()

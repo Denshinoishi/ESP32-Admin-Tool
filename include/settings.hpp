@@ -2,15 +2,30 @@
 Definiciones
 */
 
-#define RELAY1     27       // GPIO27 para salida de Rele 1
-#define RELAY2     26       // GPIO26 para salida de Rele 2
-#define WIFILED    18       // GPIO12 para LED INDICADOR WIFI
-#define MQTTLED    19       // GPIO13 para LED INDICADOR MQTT
+#define RELAY1 27  // GPIO27 para salida de Rele 1
+#define RELAY2 26  // GPIO26 para salida de Rele 2
+#define WIFILED 18 // GPIO12 para LED INDICADOR WIFI
+#define MQTTLED 19 // GPIO13 para LED INDICADOR MQTT
 
-#define RS232_TX   17       // GPIO17 como TX para RS232
-#define RS232_RX   16       // GPIO16 como RX para RS232
-#define RS232_BAUD 9600     // Velocidad de comunicación RS232
+#define RS232_TX 17     // GPIO17 como TX para RS232
+#define RS232_RX 16     // GPIO16 como RX para RS232
+#define RS232_BAUD 9600 // Velocidad de comunicación RS232
 
+/*
+Capacidad JSON
+*/
+const size_t capacityWifi = JSON_OBJECT_SIZE(16) + 424;
+const size_t capacityMQTT = JSON_OBJECT_SIZE(7) + 166;
+const size_t capacityRelays = JSON_OBJECT_SIZE(2) + 30;
+const size_t capacityAdmin = JSON_OBJECT_SIZE(2) + 42;
+    
+
+/*
+    Versión Firmware desde las variables de entorno platformio.ini
+*/
+#define TEXTIFY(A) #A
+#define ESCAPEQUOTE(A) TEXTIFY(A)
+String currentfirmware = ESCAPEQUOTE(BUILD_TAQ);
 /*
 Version de Hardware
 */
@@ -19,45 +34,50 @@ Version de Hardware
 /*
 Zona WIFI
 */
-bool    wifi_staticIp;              //  Uso de IP Estática
-char    wifi_ssid[30];              //  Red WIFI
-char    wifi_passw[30];             //  Contraseña del WIFI
-char    wifi_ip_static[15];         //  IP Estática
-char    wifi_gateway[15];           //  Gateway
-char    wifi_subnet[15];            //  Subred
-char    wifi_primaryDNS[15];        //  DNS primario
-char    wifi_secondaryDNS[15];      //  DNS secundario
+bool wifi_staticIp;         //  Uso de IP Estática
+char wifi_ssid[30];         //  Red WIFI
+char wifi_passw[30];        //  Contraseña del WIFI
+char wifi_ip_static[15];    //  IP Estática
+char wifi_gateway[15];      //  Gateway
+char wifi_subnet[15];       //  Subred
+char wifi_primaryDNS[15];   //  DNS primario
+char wifi_secondaryDNS[15]; //  DNS secundario
 
-//Configuraciones Generales
-char    id[30];                     //  ID del dispositivo
-int     bootCount;                  //  Número de reinicios
+// Configuraciones Generales
+char id[30];   //  ID del dispositivo
+int bootCount; //  Número de reinicios
 
 /*
 Zona AP
 */
-bool    ap_accesPoint;               //  Uso Modo AP
-char    ap_name[31];                 //  SSID AP
-char    ap_passw[63];                //  Pasword AP
-int     ap_canal;                    //  Canal AP
-int     ap_hidden;                   //  Visibilidad del AP (0 - Visible 1 - Oculto) 
-int     ap_connect;                  //  Número de conexiones del AP
+bool ap_accessPoint; //  Uso Modo AP
+char ap_name[31];    //  SSID AP
+char ap_passw[63];   //  Pasword AP
+int ap_canal;        //  Canal AP
+int ap_hidden;       //  Visibilidad del AP (0 - Visible 1 - Oculto)
+int ap_connect;      //  Número de conexiones del AP
 /*
 MQTT
 */
-boolean mqtt_enable;                //  Habilitar MQTT Broker
-char    mqtt_user[30];              //  Usuario MQTT Broker
-char    mqtt_id[30];                //  ID MQTT Broker
-char    mqtt_passw[30];             //  Pasword MQTT Broker
-char    mqtt_server[39];            //  Servidor MQTT Broker
-int     mqtt_port;                  //  Puerto Servidor MQTT Broker
-int     mqtt_time;                  //  Tiempo de envio por MQTT Broker
+boolean mqtt_enable;  //  Habilitar MQTT Broker
+char mqtt_user[30];   //  Usuario MQTT Broker
+char mqtt_id[30];     //  ID MQTT Broker
+char mqtt_passw[30];  //  Pasword MQTT Broker
+char mqtt_server[39]; //  Servidor MQTT Broker
+int mqtt_port;        //  Puerto Servidor MQTT Broker
+int mqtt_time;        //  Tiempo de envio por MQTT Broker
 /*
  Otros
  */
-uint8_t ip[4];                      // Variabla función convertir char a IP
-float TempCPU;                      // Temperatura de la CPU en °C
+uint8_t ip[4]; // Variabla función convertir char a IP
+float TempCPU; // Temperatura de la CPU en °C
 /*
 IO
 */
 boolean relay_01_status;
 boolean relay_02_status;
+//---------------------------------------------------------
+// Zona Username y Password para el acceso al panel de administración
+//--------------------------------------------------------- 
+char www_username[15]; // Usuario para el acceso al panel de administración
+char www_password[15];    // Contraseña para el acceso al panel de administración

@@ -17,7 +17,7 @@ void SettingResetWiFi(){
         strlcpy(wifi_secondaryDNS, "8.8.4.4", sizeof(wifi_secondaryDNS));
 
             /*AP*/
-        ap_accesPoint = false;
+        ap_accessPoint = false;
         strlcpy(ap_name, deviceID().c_str(), sizeof(ap_name));
         strlcpy(ap_passw, "adminesp32", sizeof(ap_passw));
         ap_canal = 9;
@@ -34,7 +34,7 @@ void setingsResetMQTT(){
     strlcpy(mqtt_user, "", sizeof(mqtt_user));
     strlcpy(mqtt_passw, "", sizeof(mqtt_passw));
     strlcpy(mqtt_server, "192.168.0.168", sizeof(mqtt_server));
-    strlcpy(mqtt_id, deviceID().c_str(), sizeof(mqtt_id));
+    strlcpy(mqtt_id, device_id.c_str(), sizeof(mqtt_id));
     mqtt_time = 60000;
     mqtt_port = 1883;
     mqtt_enable = true;
@@ -48,4 +48,12 @@ void settingsResettRelay(){
     relay_01_status = LOW;
     relay_02_status = LOW;
 
+}
+
+//---------------------------------------------------------
+// Valores por defecto para el panel de administración
+//---------------------------------------------------------
+void settingsResetAdmin(){
+    strlcpy(www_username, "admin", sizeof(www_username));
+    strlcpy(www_password, "admin", sizeof(www_password));
 }

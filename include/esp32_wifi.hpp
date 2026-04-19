@@ -76,7 +76,7 @@ void startClient(){
 
 void wifi_setup(){
     // Modo AP
-    if (ap_accesPoint)
+    if (ap_accessPoint)
     {
         starAP();
         log("Info: WiFi modo AP");
