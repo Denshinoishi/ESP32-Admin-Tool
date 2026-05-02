@@ -61,41 +61,12 @@ void callback(char *topic, byte *payload, unsigned int lenght){
         mqttRX();
     }
     mensaje.trim();
-    DynamicJsonDocument JsonDoc(300);
-
-    log("Mensaje Crudo Recibido: ");
-    log(mensaje);
-    deserializeJson(JsonDoc, mensaje);
-    // TODO: MANEJO JSON
-    if (JsonDoc["RELAY1"] == "on")
-    {
-       setOnSingle(RELAY1);
-       relay_01_status = HIGH;
-       settingsSaveRelays();
-    }else if (JsonDoc["RELAY1"] == "off")
-    {
-        setOffSingle(RELAY1);
-        relay_01_status = LOW;
-        settingsSaveRelays();
-    }else if (JsonDoc["RELAY2"] == "on")
-    {
-        setOnSingle(RELAY2);
-        relay_02_status = LOW;
-        settingsSaveRelays();
-    }else if (JsonDoc["RELAY2"] == "off")
-    {
-        setOffSingle(RELAY2);
-        relay_02_status = LOW;
-        settingsSaveRelays();
-    }
-    
-    
-
+    OnOffRelays(mensaje);
 
 
     log("Info: Topico -->" + str_topic);
     log("Info: Mensaje -->" + mensaje);
-    serializeJsonPretty(JsonDoc, Serial);
+
 
 }
 

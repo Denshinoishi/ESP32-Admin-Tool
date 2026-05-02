@@ -2,10 +2,10 @@
 Definiciones
 */
 
-#define RELAY1 27  // GPIO27 para salida de Rele 1
-#define RELAY2 26  // GPIO26 para salida de Rele 2
-#define WIFILED 18 // GPIO12 para LED INDICADOR WIFI
-#define MQTTLED 19 // GPIO13 para LED INDICADOR MQTT
+#define RELAY1 22  // GPIO22 para salida de Rele 1
+#define RELAY2 23  // GPIO23 para salida de Rele 2
+#define WIFILED 18 // GPIO18 para LED INDICADOR WIFI
+#define MQTTLED 19 // GPIO19 para LED INDICADOR MQTT
 
 #define RS232_TX 17     // GPIO17 como TX para RS232
 #define RS232_RX 16     // GPIO16 como RX para RS232

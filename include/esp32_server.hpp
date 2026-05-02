@@ -70,7 +70,7 @@ void handleHome(AsyncWebServerRequest *request)
         s.replace(F("#mqtt_on#"), mqttclient.connected() ? F("<span class='label btn-metis-2'>Online</span>") : F("<span class='label label-danger'>Offline</span>"));
         s.replace(F("#temp_cpu#"), String(TempCPUValue()));
         //  Progessbar
-        s.replace(F("#flash_available#"), String((round(SPIFFS.usedBytes() * 100)) / SPIFFS.totalBytes(), 0));
+        s.replace(F("#spiffs_used#"), String((round(SPIFFS.usedBytes() * 100)) / SPIFFS.totalBytes(), 0));
         s.replace(F("#ram_available#"), String(ESP.getFreeHeap() * 100 / ESP.getHeapSize()));
         //  IO
         s.replace(F("#relay1#"), relay_01_status ? "cheked" : "");
@@ -171,8 +171,8 @@ void InitServer()
 
                       s.replace(F("#ap_accesPoint#"), ap_accessPoint ? "checked" : "");
                       s.replace(F("#ap_AP_en#"), ap_accessPoint ? "1" : "0");
-                      s.replace(F("#nameap#"), String(ap_name));
-                      s.replace(F("#canalap#"), String(ap_canal));
+                      s.replace(F("#ap_nameap#"), String(ap_name));
+                      s.replace(F("#ap_canalap#"), String(ap_canal));
                       s.replace(F("#ap_hiddenap#"), ap_hidden ? "checked" : "");
                       s.replace(F("#ap_visibility#"), ap_hidden ? "0" : "1");
                       s.replace(F("#ap_connetap#"), String(ap_connect));

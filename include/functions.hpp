@@ -113,6 +113,7 @@ void setupPinOut(){
     pinMode(MQTTLED, OUTPUT);
     pinMode(RELAY1, OUTPUT);
     pinMode(RELAY2, OUTPUT);
+
     setOffSingle(WIFILED);
     setOffSingle(MQTTLED);
     setOffSingle(RELAY1);
@@ -323,3 +324,37 @@ String SweetAlert(String TitleWeb, String SweetTitle, String SweetText, String S
 return SweetAlert;
 }
 
+//---------------------------------------------------------
+//Control IO desde Websocket/MQTT
+//----------------------------------------------------------
+boolean settingsSaveRelays();
+
+void OnOffRelays(String command){
+
+    DynamicJsonDocument JsonDoc(1024);
+    deserializeJson(JsonDoc, command);
+
+    if(JsonDoc["protocol"] == "WS"){
+        log("Info: Procesando Orden del Websocket: " + command);
+    } else if (JsonDoc["protocol"] == "MQTT") {
+        log("Info: Procesando Orden del MQTT: " + command);
+    } else {
+        log("Info: Procesando Orden Desconocida: " + command);
+    }
+
+    serializeJsonPretty(JsonDoc, Serial);
+
+     if (JsonDoc["command"]){
+        digitalWrite(JsonDoc["output"] == "RELAY1" ? RELAY1 : RELAY2, HIGH);
+        JsonDoc["output"] == "RELAY1" ? relay_01_status = HIGH : relay_02_status = HIGH;
+        
+     } else {
+        digitalWrite(JsonDoc["output"] == "RELAY1" ? RELAY1 : RELAY2, LOW);
+        JsonDoc["output"] == "RELAY1" ? relay_01_status = LOW : relay_02_status = LOW;
+        
+     }
+
+        settingsSaveRelays();
+  
+
+}

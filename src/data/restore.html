@@ -17,13 +17,14 @@
     <link rel="stylesheet" href="www/MoneAdmin.css" />
     <link rel="stylesheet" href="www/font-awesome.css" />
     <link rel="stylesheet" href="www/bootstrap-switch.css" />
+    <link rel="stylesheet" href="www/sweetalert2.min.css" />
     <link rel="stylesheet" href="www/styles.css" />
     <!--END GLOBAL STYLES -->
 </head>
 <!-- END  HEAD-->
 <!-- BEGIN BODY-->
 
-<body class="padTop53 ">
+<body class="padTop53 " onload="visu();">
     <!-- MAIN WRAPPER -->
     <div id="wrap">
         <!-- HEADER SECTION -->
@@ -130,10 +131,20 @@
                     </div>
                     <div class="panel-body">
                         <br>
-                        <button class="btn btn-danger btn-lg" id="btn">
+                        <button class="btn btn-danger btn-lg" id="btn" onclick="restaurar();">
                             <i class="icon-refresh icon-white"></i> Restablecer
                         </button>                      
-                        
+                        <div id="visu">
+                            <br>
+                                <h3>Restableciendo en <span id="time" class="text-primary"> -- </span> segundos, 
+                                <span class="text-danger">!No apague el dispositivo!</span></h3>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-danger" id="progress"
+                                    role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                                        <span class="label label-default" id="progressvalue"></span>
+                                    </div>
+                                </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,6 +165,7 @@
     <script src="www/bootstrap.min.js"></script>
     <script src="www/modernizr-2.6.2.min.js"></script>
     <script src="www/bootstrap-switch.min.js"></script>
+    <script src="www/sweetalert2.min.js"></script>
     <script src="www/scripts.js"></script>
     <!-- END GLOBAL SCRIPTS -->
 </body>

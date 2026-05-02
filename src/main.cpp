@@ -17,7 +17,6 @@
 #include "settingsSave.hpp"
 #include "esp32_wifi.hpp"
 #include "esp32_mqtt.hpp"
-#include "esp32_api.hpp"
 #include "esp32_websoket.hpp"
 #include "esp32_server.hpp"
 
@@ -76,6 +75,8 @@ void setup()
     // Guarda la configuración de administrador por Primera Vez
     settinsSaveAdmin();
   }
+  // Inicializar Websocket
+  initWebSockets();
   // Inicializar el Servidor
   InitServer();
   // Devuelve el listado de archivos y directorios en la raiz
@@ -118,8 +119,13 @@ void loop()
     }
   }
 
+//----------------------------------
+// Enviar JSON por WS
+//----------------------------------
+  if(millis() - lastWsSend > 1000){
+    lastWsSend = millis();
+    WsMessage(GetJson(), "");
 
-
-
+  }
 
 }
