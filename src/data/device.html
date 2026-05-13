@@ -118,7 +118,7 @@
             <div class="inner" style="min-height:1200px;">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2> Información del dispositivo</h2>
+                        <h2 id="page">Información del dispositivo</h2>
                     </div>
                 </div>
             <hr>
@@ -130,31 +130,34 @@
                         <i class="icon-info-sign"></i> Dispositivo
                     </div>
                     <div class="panel-body">
-                        <br>
-                        
-                        <form class="form-horizontal" name="esp-device" action="esp-device" method="post">
-
+                        <br>                        
+                        <form class="form-horizontal" name="esp-device" action="esp-device" method="post" id="form">
                             <div class="form-group">
                                 <label for="serie" class="control-label col-lg-3">Número de Serie:</label>
                                 <div class="col-lg-5">
                                     <input type="text" id="serie" value="#serie#" readonly class="form-control" />
                                 </div>
                             </div>
-
                             <div class="form-group" id="form_id">
                                 <label for="id" class="control-label col-lg-3">Identificación del Dispositivo :</label>
                                 <div class="col-lg-5">
-                                    <input type="text" id="id" name="id" value="#id#" placeholder="Identificación del Dispositivo" class="form-control" />
+                                    <input type="text" id="id" name="id" value="#id#" data-expresion="id" placeholder="Identificación del Dispositivo" class="form-control" />
+                                    <label for="id" class="help-block formulario_input-error">El identificador tiene que contener letras minúsculas, números y carácteres de 4 a 30 dígitos</label>
                                 </div>
                             </div>
-                     
+                            <div class="form-group formulario_mensaje" id="formulario_mensaje">
+                                <div class="col-lg-12">
+                                    <div class="alert alert-danger">
+                                        <p class="alert-link"><i class="icon-remove-sign"></i> <b>Error: </b>¡Por favor diligencia el formulario correctamente!</p>
+                                    </div>
+                                </div>
+                            </div>                   
                             <div class="form-group">
                                 <label for="#" class="control-label col-lg-3"></label>
                                 <div class="col-lg-5">
                                     <button class="btn btn-primary" type="submit"><i class="icon-save icon-white"></i> Guardar</button>
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -181,5 +184,4 @@
     <!-- END GLOBAL SCRIPTS -->
 </body>
 <!-- END BODY-->
-
 </html>
