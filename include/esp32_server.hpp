@@ -73,6 +73,7 @@ void handleHome(AsyncWebServerRequest *request) {
         s.replace(F("#bootCount#"), String(bootCount));
         /* Bloque General */
         s.replace(F("#platform#"), platform());
+        s.replace(F("#sys_time#"), getDateTime());
         s.replace(F("#mqtt_on#"), mqttclient.connected() ? F("<span class='label btn-metis-2'>Online</span>") : F("<span class='label label-danger'>Offline</span>"));
         s.replace(F("#temp_cpu#"), String(TempCPUValue()));
         /* Bloque Progressbar */
@@ -218,6 +219,7 @@ void InitServer(){
             file.close();
             // Sección Cliente
             s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
             s.replace(F("#wifi_ssid#"), wifi_ssid);
             s.replace(F("#wifi_staticIP#"), wifi_staticIP ? "checked" : "");
             s.replace(F("#wifi_staticIPen#"), wifi_staticIP ? "1" : "0");
@@ -257,6 +259,7 @@ void InitServer(){
             String s = file.readString();
             file.close();
             s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
             s.replace(F("#mqtt_enable#"), mqtt_enable ? "checked" : "");
             s.replace(F("#mqtten#"), mqtt_enable ? "1" : "0");
             s.replace(F("#mqtt_id#"), mqtt_id);
@@ -287,6 +290,7 @@ void InitServer(){
             String s = file.readString();
             file.close();
             s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
             s.replace(F("#id#"), id);
             s.replace(F("#serie#"), device_id);
             // Send data
@@ -312,6 +316,7 @@ void InitServer(){
             String s = file.readString();
             file.close();
             s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
             // Send data
             request->send(200, "text/html", s);
         }else{
@@ -335,6 +340,7 @@ void InitServer(){
             String s = file.readString();
             file.close();
             s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
             // Send data
             request->send(200, "text/html", s);
         }else{
@@ -358,12 +364,99 @@ void InitServer(){
             String s = file.readString();
             file.close();
             s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
             // Send data
             request->send(200, "text/html", s);
         }else{
             request->send(500, "text/plain","/admin.html not found, have you flashed the SPIFFS?");
         }
     });
+    // -------------------------------------------------------------------
+    // Cargar página time.html
+    // url: /esp-time
+    // Metodo: GET
+    // -------------------------------------------------------------------
+    server.on("/esp-time", HTTP_GET, [](AsyncWebServerRequest *request){
+        if(!request->authenticate(www_username, www_password))
+            return request->requestAuthentication();
+        // Cargar Página
+        File file = SPIFFS.open("/time.html", "r");
+        if (file)
+        {
+            file.setTimeout(100);
+            String s = file.readString();
+            file.close();
+            s.replace(F("#platform#"), platform());
+            s.replace(F("#sys_time#"), getDateTime());
+            s.replace(F("#time_ajuste_0#"), time_ajuste == 0 ? "checked" : "");
+            s.replace(F("#time_ajuste_1#"), time_ajuste == 1 ? "checked" : "");
+            s.replace(F("#time_ajuste#"), time_ajuste == 1 ? "1" : "0");
+            s.replace(F("#time_hr#"), String(time_hr));
+            s.replace(F("#time_mn#"), String(time_mn));
+            s.replace(F("#time_sc#"), String(time_sc));
+            s.replace(F("#time_date#"), time_date);
+            s.replace(F("#time_zhoraria#"), String((time_zhoraria/3600)));
+            s.replace(F("#time_ajuste#"), String(time_ajuste));
+            s.replace(F("#time_server#"), time_server);
+            //Send data
+            request->send(200, "text/html", s);
+        }else{
+            request->send(500, "text/plain", "time.html not found, have you flashed the SPIFFS");
+        }
+        
+    });
+    // -------------------------------------------------------------------
+    // Guardar la configuración del Tiempo
+    // url: /esp-time
+    // Metodo: POST
+    // -------------------------------------------------------------------
+    server.on("/esp-time", HTTP_POST, [](AsyncWebServerRequest *request){
+        if(!request->authenticate(www_username, www_password)) 
+            return request->requestAuthentication();
+        
+        if(request->hasArg("time_ajuste"))
+        time_ajuste = request->arg("time_ajuste").toInt();
+
+        if(request->hasArg("time_h"))
+        time_hr = request->arg("time_h").toInt();
+
+        if(request->hasArg("time_m"))
+        time_mn = request->arg("time_m").toInt();
+
+        if(request->hasArg("time_s"))
+        time_sc = request->arg("time_s").toInt();
+
+        String s;
+        // DD-MM-YYYY
+        if(request->hasArg("time_date"))
+        s = request->arg("time_date");
+        s.trim();
+        if (s != ""){
+            strlcpy(time_date, s.c_str(), sizeof(time_date));
+        }
+
+        if(request->hasArg("time_zhoraria"))
+        time_zhoraria = request->arg("time_zhoraria").toFloat()*3600;
+
+        // time.nist.gov
+        if(request->hasArg("time_server"))
+        s = request->arg("time_server");
+        s.trim();
+        if (s != ""){
+            strlcpy(time_server, s.c_str(), sizeof(time_server));
+        }       
+        // leds
+        leds();
+        // Guardar la configuracion de la fecha y hora
+        if(settinsSaveTimer()){
+            request->send(200, "text/html", SweetAlert("MQTT", "Hecho", "La configuración de Fecha y Hora se Guardó correctamente", "success", "accion"));
+            return;
+        }else{
+            request->send(200, "text/html", SweetAlert("MQTT", "Error", "La configuración de Fecha y Hora no se pudo Guardar", "error", "aviso")); 
+            return;
+        } 
+    });
+
     // -------------------------------------------------------------------
     // Cargar página print.html
     // url: /esp-print
@@ -379,7 +472,6 @@ void InitServer(){
             file.setTimeout(100);
             String s = file.readString();
             file.close();
-            // No necesitas reemplazar nada, se envía tal cual
             request->send(200, "text/html", s);
         } else {
             request->send(500, "text/plain","/print.html not found, have you flashed the SPIFFS?");

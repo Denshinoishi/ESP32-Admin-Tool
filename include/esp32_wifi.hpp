@@ -10,9 +10,10 @@
  * -------------------------------------------------------------------
 */
 
-#include <WiFi.h>
+
 #include <DNSServer.h>
 #include <ESPmDNS.h> 
+
 
 const byte DNSSERVER_PORT = 53;
 DNSServer dnsServer;
@@ -20,12 +21,12 @@ DNSServer dnsServer;
 IPAddress apIP(192, 168, 4, 1);
 IPAddress netMsk(255, 255, 255, 0);
 
-int wifi_mode = WIFI_STA;
+
 // new
 bool wifi_change = false;
 
 unsigned long previousMillisWIFI = 0;
-unsigned long intervalWIFI = 30000;
+unsigned long intervalWIFI = 60000;
 // new
 unsigned long previousMillisAP = 0;
 
@@ -43,6 +44,7 @@ void startAP(){
     WiFi.softAPConfig(apIP, apIP, netMsk);
     WiFi.setHostname(deviceID().c_str());
     WiFi.softAP(ap_nameap, ap_passwordap, ap_canalap, ap_hiddenap, ap_connetap);
+    delay(500); 
     log("Info: WiFi AP " + deviceID() + " - IP " + ipStr(WiFi.softAPIP()));
     dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
     dnsServer.start(DNSSERVER_PORT, "*", apIP);
@@ -141,6 +143,7 @@ void wifiLoop(){
             wifi_change = true;
             w = 0;
             startAP();
+            server_needs_restart = true;   // marcar reinicio del servidor
         }else{
             log("Warning: SSID " + String(wifi_ssid) + " desconectado");
         }
@@ -162,11 +165,12 @@ void wifiAPLoop(){
         a++;
         // 10 es igual a 5 minuto
         previousMillisAP = currentMillis;
-        if(a == 2){
+        if(a == 5){
             log("Info: Cambiando a Modo Estación");
             wifi_change = false;
             a = 0;
             startClient();
+            server_needs_restart = true;   // marcar reinicio del servidor
         }
     }
 }

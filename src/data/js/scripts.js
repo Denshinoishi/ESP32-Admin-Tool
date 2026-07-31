@@ -73,6 +73,10 @@ const initWS = () => {
       document.getElementById("fw_label").innerHTML = json.msg + "%";
       document.getElementById("fw_info").innerHTML = json.msg + "%";
     }
+    //time
+    if(json.type == "time"){
+      document.getElementById('sys_time').innerHTML = json.msg;
+    }
 
     if (json.type == "rs232") {
       const logElement = document.getElementById("responseLog");
@@ -653,7 +657,8 @@ if (
   pathname == "/esp-wifi" ||
   pathname == "/esp-mqtt" ||
   pathname == "/esp-device" ||
-  pathname == "/esp-admin"
+  pathname == "/esp-admin" ||
+  pathname == "/esp-time"
 ) {
   document.addEventListener("DOMContentLoaded", function (event) {
     document
@@ -755,6 +760,8 @@ function manejadorValidacion(e) {
         3000,
       );
     }
+  } else if(page == "Configuración Fecha y Hora"){
+    SweetAlert('¿Guardar?', page, 'question', this);
   }
 }
 // Mansaje para confirmar el Guardado con el Evento Submit
@@ -1095,33 +1102,110 @@ function calcularChecksumXOR(hexString) {
   // Devuelve en formato hex de dos dígitos
   return checksum.toString(16).toUpperCase().padStart(2, "0");
 }
+// Envio de Comando por WS a ESP32 RS232
+if (pathname === "/esp-print") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form");
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("commandInput");
+        if (!input) return; // seguridad extra
+        const cmd = input.value.trim();
+        if (expresiones.HexCommand.test(cmd)) {
+          const cs = calcularChecksumXOR(cmd);
+          const fullCmd = cmd + " " + cs;
+          console.log("Enviando Comando por WS:", fullCmd);
+          ws.send(fullCmd);
+        } else {
+          mensaje("top-end", "error", "Formato inválido", 2000);
+        }
+      });
+    }
+  });
+}
+// Validación de formato Input Comando
+if (pathname === "/esp-print") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("commandInput");
+    if (input) {
+      input.addEventListener("input", function (e) {
+        let value = e.target.value
+          .toUpperCase()
+          .replace(/[^0-9A-F]/g, ""); // solo hex
+        let formatted = "";
 
-document.getElementById("form").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const cmd = document.getElementById("commandInput").value.trim();
-  if (expresiones.HexCommand.test(cmd)) {
-    const cs = calcularChecksumXOR(cmd);
-    const fullCmd = cmd + " " + cs;
-    console.log("Enviando Comando por WS:", fullCmd);
-    ws.send(fullCmd); // 👈 enviar como string plano
-  } else {
-    mensaje("top-end", "error", "Formato inválido", 2000);
-  }
-});
+        for (let i = 0; i < value.length; i += 2) {
+          formatted += value.substr(i, 2);
+          if (i + 2 < value.length) formatted += " ";
+        }
 
-document.getElementById("commandInput").addEventListener("input", function(e) {
-  let value = e.target.value.toUpperCase().replace(/[^0-9A-F]/g, ""); // solo hex
-  let formatted = "";
-
-  for (let i = 0; i < value.length; i += 2) {
-    formatted += value.substr(i, 2);
-    if (i + 2 < value.length) formatted += " ";
-  }
-
-  e.target.value = formatted;
-});
-
+        e.target.value = formatted;
+      });
+    }
+  });
+}
+if(pathname === "/esp-print"){
 document.getElementById("clearLog").addEventListener("click", () => {
   const logElement = document.getElementById("responseLog");
   logElement.textContent = "";   // borra todo el contenido
 });
+}
+
+//Time
+function auto_man(e) {
+  if (e.value == 0) {
+    document.getElementById(e.dataset.div_off).classList.remove('time-activo');
+    document.getElementById(e.dataset.div_on).classList.remove('time');
+    document.getElementById(e.dataset.div_off).classList.add('time');
+    document.getElementById(e.dataset.div_on).classList.add('time-activo');
+  } else {
+    document.getElementById(e.dataset.div_off).classList.remove('time-activo');
+    document.getElementById(e.dataset.div_on).classList.remove('time');
+    document.getElementById(e.dataset.div_off).classList.add('time');
+    document.getElementById(e.dataset.div_on).classList.add('time-activo');
+  }
+}
+
+function loadTime() {
+  
+  const time_h = document.getElementById('time_h');
+  const time_m = document.getElementById('time_m');
+  const time_s = document.getElementById('time_s');
+  const time_z_horaria = document.getElementById("time_z_horaria");
+
+  time_h.innerHTML = '';
+  time_m.innerHTML = '';
+  time_s.innerHTML = '';
+
+  for (let index = 0; index < 24; index++) {
+    time_h.innerHTML += `<option value="${index}"> ${ index > 9 ? index : '0'+ index } </option>'`
+    
+  }
+
+  for (let index = 0; index < 60; index++) {
+    time_m.innerHTML += `<option value="${index}"> ${ index > 9 ? index : '0'+ index } </option>'`
+    time_s.innerHTML += `<option value="${index}"> ${ index > 9 ? index : '0'+ index } </option>'`
+    
+  }
+
+  time_h.value = document.getElementById('time_hr').value;
+  time_m.value = document.getElementById('time_mn').value;
+  time_s.value = document.getElementById('time_sc').value;
+  time_z_horaria.value =  document.getElementById("time_zhoraria").value;
+
+  if (document.getElementById ("time_ajuste").value == '0') {
+    document.getElementById('auto').classList.remove('time-activo');
+    document.getElementById('auto').classList.add('time');
+    document.getElementById('manual').classList.remove('time');
+    document.getElementById('manual').classList.add('time-activo');
+    
+  } else {
+    document.getElementById('auto').classList.remove('time');
+    document.getElementById('auto').classList.add('time-activo');
+    document.getElementById('manual').classList.remove('time-activo');
+    document.getElementById('manual').classList.add('time');
+    
+  }
+
+}

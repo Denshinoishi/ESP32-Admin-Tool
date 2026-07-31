@@ -31,7 +31,7 @@ struct Restore {
   bool active;
 };
 
-Restore restore_pin = {33, false};
+Restore restore_pin = {15, false};
 int pin_active = 0;
 
 // -------------------------------------------------------------------

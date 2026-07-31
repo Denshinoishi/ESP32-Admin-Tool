@@ -482,5 +482,58 @@ void sendRS232Command(String payload) {
 
         start = end + 1;
     }
-    log("Comando enviado por RS232");
+    log(F("Comando enviado por RS232"));
 }
+//Time
+
+//--------------------------------------------------------------
+// Setup Fecha y Hora Auto/Manual
+// -------------------------------------------------------------
+void TimerSetup() {
+    if (time_ajuste == 0) {
+        rtc.setTime(time_sc, time_mn, time_hr, time_dy, time_mt, time_yr);
+        log(F("Info: RTC set"));
+    } else {
+        if (WiFi.status() == WL_CONNECTED) {
+            ntpClient.begin();
+            ntpClient.setPoolServerName(time_server);
+            ntpClient.setTimeOffset(time_zhoraria);
+            if (ntpClient.update() && ntpClient.isTimeSet()) {
+                time_t epochTime = ntpClient.getEpochTime();
+                struct tm *now = gmtime((time_t *)&epochTime);
+                rtc.setTime(now->tm_sec, now->tm_min, now->tm_hour,
+                            now->tm_mday, now->tm_mon + 1, now->tm_year + 1900);
+                log(F("Info: RTC sincronizado con NTP"));
+            }
+        } else {
+            rtc.setTime(time_sc, time_mn, time_hr, time_dy, time_mt, time_yr);
+            log(F("Info: RTC Set"));
+        }
+    }
+}
+
+String getDateTime() {
+    char fecha[20];
+    int dia     = rtc.getDay();
+    int mes     = rtc.getMonth() + 1;
+    int anio    = rtc.getYear();
+    int hora    = rtc.getHour(true);
+    int minuto  = rtc.getMinute();
+    int segundo = rtc.getSecond();
+
+    sprintf(fecha, "%.2d-%.2d-%.4d %.2d:%.2d:%.2d",
+            dia, mes, anio, hora, minuto, segundo);
+    return String(fecha);
+}
+
+// -----------------------------------------------------
+// Función para seteo de Día, Mes y Año a las variables
+// -----------------------------------------------------
+void setDyMsYr(){
+    String str_date = time_date;
+    int index = str_date.lastIndexOf('_');
+    time_dy = str_date.substring(0,2).toInt();
+    time_mt = str_date.substring(3,5).toInt();
+    time_yr = str_date.substring(6,10).toInt();
+}
+

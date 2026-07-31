@@ -63,3 +63,15 @@ void settingsResetAdmin(){
     strlcpy(www_username, "admin", sizeof(www_username));
     strlcpy(www_password, "admin", sizeof(www_password));
 }
+
+void settingsResetTimer(){
+    // Define configuración Timer
+    time_ajuste = 0;
+    strlcpy(time_date, "01-01-2022", sizeof(time_date));
+    time_hr = 0;
+    time_mn = 0;
+    time_sc = 0;
+    setDyMsYr();
+    time_zhoraria = -18000;                                         // Zona Horaria  GMT -5 * -3600 = ?
+    strlcpy(time_server, "time.nist.gov", sizeof(time_server));
+}

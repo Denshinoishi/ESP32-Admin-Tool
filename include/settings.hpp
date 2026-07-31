@@ -30,6 +30,7 @@ const size_t capacitywifi = JSON_OBJECT_SIZE(16)+424;
 const size_t capacitymqtt = JSON_OBJECT_SIZE(7)+166;
 const size_t capacityrelays = JSON_OBJECT_SIZE(2)+30;
 const size_t capacityadmin = JSON_OBJECT_SIZE(2)+42;
+const size_t capacitytimer = JSON_OBJECT_SIZE(11)+424;
 // -------------------------------------------------------------------
 // Versión de Firmware desde las variables de entorno platformio.ini
 // -------------------------------------------------------------------
@@ -56,7 +57,10 @@ char    wifi_ip_static[15];         // IP Estático
 char    wifi_gateway[15];           // Gateway     
 char    wifi_subnet[15];            // Subred    
 char    wifi_primaryDNS[15];        // DNS primario  
-char    wifi_secondaryDNS[15];      // DNS secundario 
+char    wifi_secondaryDNS[15];      // DNS secundario
+int wifi_mode = WIFI_STA;           // Modo inicial WiFi   
+bool server_needs_restart = false;
+
 // -------------------------------------------------------------------
 // Zona AP
 // -------------------------------------------------------------------
@@ -95,3 +99,22 @@ char www_password[15];              // Contraseña del usuario servidor Web
 // ------------------------------------------------------------------- 
 size_t content_len;
 #define U_PART U_SPIFFS
+// -------------------------------------------------------------------
+// TIME
+// -------------------------------------------------------------------
+ESP32Time rtc;                      // Clase ESP32Time
+//--------------------------------------------------------------------
+long lasTime = 0;
+int time_ajuste;                        // 0 - Manual - 1 - Automático internet SRV NTP
+char time_date[11];                     // 00/00/0000
+int time_hr;                            // Hora 0 - 23
+int time_mn;                            // Minutos 0 - 59
+int time_sc;                            // Segundos 0 - 59
+int time_dy;                            // Días 1 - 31
+int time_mt;                            // Meses 1 - 12
+int time_yr;                            // Año 2022
+float time_zhoraria;                    // Zona Horaria GMT 0 = 0 - GMT + 1 = 3600 - GMT - 1 = -3600
+char time_server[39];                   // Servidor NTP Ejemplo: time.nist.gov
+// NTP Server
+WiFiUDP ntpUDP;
+NTPClient ntpClient(ntpUDP);

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+
+<head>
+    <title>FECHA-HORA | ESP32 Admin Tool </title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="description" content="Panel Administrativo para el ESP32">
+    <meta name="author" content="ELECTRONICIOT.COM">
+    <link rel="icon" href="img/esp32.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/font-aws.css">
+    <link rel="stylesheet" href="css/vivify.css">
+    <link rel="stylesheet" href="css/sweetalert.css">
+    <link rel="stylesheet" href="css/mooli.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body data-theme="light" onload="loadTime()">
+    <div id="body" class="theme-green">
+        <div class="overlay"></div>
+        <div id="wrapper">
+            <nav class="navbar navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-left">
+                        <div class="navbar-btn"> <a href="/"><img src="img/esp32.png" alt="Mooli Logo"
+                                    class="img-fluid logo"></a> <button type="button" class="btn-toggle-offcanvas"><i
+                                    class="fa fa-align-left"></i></button> </div>
+                    </div>
+                    <div class="navbar-right">
+                        <div id="navbar-menu">
+                            <ul class="nav navbar-nav">
+                                <li class="mt-2"> <label class="switch dark_mode"> <input type="checkbox"> <span
+                                            class="slider round"></span> </label> </li>
+                                <li class="hidden-xs"><a href="javascript:void(0);" id="btnFullscreen"
+                                        class="icon-menu"><i class="fa fa-arrows-alt"></i></a></li>
+                                <li><a href="esp-logout" class="icon-menu"><i class="fa fa-power-off"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div id="left-sidebar" class="sidebar"> <a href="#" class="menu_toggle"><i class="fa fa-angle-left"></i></a>
+                <div class="navbar-brand"> <a href="/"><img src="img/esp32.png" alt="ESP32 Admin Tool Logo"
+                            class="img-fluid logo"><span>#platform#</span></a> <button type="button"
+                        class="btn-toggle-offcanvas btn btn-sm float-right"><i
+                            class="lnr lnr-menu fa fa-chevron-circle-left"></i></button> </div>
+                <div class="sidebar-scroll">
+                    <div class="user-account">
+                        <div class="user_div"> <img src="img/user.png" class="user-photo" alt="User Profile Picture">
+                        </div>
+                        <div class="dropdown"> <span>Administrador,</span> <a href="javascript:void(0);"
+                                class="dropdown-toggle user-name" data-toggle="dropdown"><strong>Usuario</strong></a>
+                            <ul class="dropdown-menu dropdown-menu-right account vivify flipInY">
+                                <li><a href="esp-admin"><i class="fa fa-user"></i>Perfil</a></li>
+                                <li class="divider"></li>
+                                <li><a href="esp-logout"><i class="fa fa-power-off"></i>Salir</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <nav id="left-sidebar-nav" class="sidebar-nav">
+                        <ul id="main-menu" class="metismenu animation-li-delay">
+                            <li class="header">Inicio</li>
+                            <li><a href="/"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+                            <li class="header">Conectividad</li>
+                            <li><a href="esp-wifi"><i class="fa fa-wifi"></i> <span>WiFi</span></a></li>
+                            <li><a href="esp-mqtt"><i class="fa fa-tasks"></i> <span>MQTT</span></a></li>
+                            <li class="header">Configuraciones</li>
+                            <li class="active"> <a href="#uiElements" class="has-arrow"><i
+                                        class="fa fa-cog"></i><span>Administrar</span></a>
+                                <ul>
+                                    <li><a href="esp-device">Dispositivo</a></li>
+                                    <li><a href="esp-admin">Contraseña</a></li>
+                                    <li><a href="esp-time">Reloj</a></li>
+                                    <li><a href="esp-restore">Restablecer</a></li>
+                                    <li><a href="esp-restart">Reiniciar</a></li>
+                                </ul>
+                            </li>
+                            <li class="header">sesión</li>
+                            <li><a href="esp-logout"><i class="fa fa-power-off"></i> <span>Salir</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div id="main-content">
+                <div class="container-fluid">
+                    <div class="block-header">
+                        <div class="row clearfix">
+                            <div class="col-lg-4 col-md-12 col-sm-12">
+                                <h1 id="page">Configuración Fecha y Hora</h1>
+                            </div>
+                            <div class="col-lg-8 col-md-12 col-sm-12 text-lg-right">
+                                <div
+                                    class="d-flex align-items-center justify-content-lg-end mt-4 mt-lg-0 flex-wrap vivify pullUp delay-550">
+                                    <div class="mb-3 mb-xl-0">
+                                        <h2 class="mb-0" id="sys_time">#sys_time# </h2> <span>Fecha y Hora del
+                                            Sistema</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card p-3 px-4">
+                                <div class="card">
+                                    <div class="header">
+                                        <h2><i class="fa fa-calendar"></i> Configuraciones de la Fecha y Hora</h2>
+                                    </div>
+                                    <div class="body mt-3">
+                                        <form method="post" name="esp-time" action="esp-time" method="POST" id="form">
+                                            <input type="hidden" id="time_hr" value="#time_hr#" /> <input type="hidden"
+                                                id="time_mn" value="#time_mn#" /> <input type="hidden" id="time_sc"
+                                                value="#time_sc#" /> <input type="hidden" id="time_zhoraria"
+                                                value="#time_zhoraria#" /> <input type="hidden" id="time_ajuste"
+                                                value="#time_ajuste#" />
+                                            <div class="form-group col-lg-12"> <label for=""
+                                                    class="text-secondary">Ajustar Hora:</label><br>
+                                                <div class="input-group mb-2">
+                                                    <div class="col-lg-6 col-md-12"> <label
+                                                            class="fancy-radio custom-color-green"> <input
+                                                                name="time_ajuste" value="0" type="radio"
+                                                                #time_ajuste_0# data-div_on="manual" data-div_off="auto"
+                                                                onchange="auto_man(this)">
+                                                            <span><i></i>Manualmente</span> </label> <label
+                                                            class="fancy-radio custom-color-green"> <input
+                                                                name="time_ajuste" value="1" type="radio"
+                                                                data-div="auto" #time_ajuste_1# data-div_on="auto"
+                                                                data-div_off="manual" onchange="auto_man(this)">
+                                                            <span><i></i>Obtener automáticamente desde Internet</span>
+                                                        </label> </div>
+                                                </div>
+                                            </div>
+                                            <div class="time-activo" id="manual">
+                                                <div class="form-group col-lg-4"> <label for="time_date"
+                                                        class="text-secondary">Fecha ( DD-MM-YYYY ):</label><br>
+                                                    <div class="input-group mb-3"> <input type="text"
+                                                            class="form-control mqtt" id="time_date" name="time_date"
+                                                            placeholder="DD-MM-YYYY" value="#time_date#"
+                                                            aria-describedby="basic-addon1"> </div>
+                                                </div>
+                                                <div class="form-group col-lg-12"> <label for="time_h"
+                                                        class="text-secondary">Hora ( HH:MM:SS ):</label><br>
+                                                    <div class="row clearfix">
+                                                        <div class="input-group col-lg-1 mb-3"> <select
+                                                                class="custom-select" id="time_h"
+                                                                name="time_h"></select> </div><span>:</span>
+                                                        <div class="input-group col-lg-1 mb-3"> <select
+                                                                class="custom-select" id="time_m"
+                                                                name="time_m"></select> </div><span>:</span>
+                                                        <div class="input-group col-lg-1 mb-3"> <select
+                                                                class="custom-select" id="time_s"
+                                                                name="time_s"></select> </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="time" id="auto">
+                                                <div class="form-group col-lg-6"> <label for="time_z_horaria"
+                                                        class="text-secondary">Zona Horaria:</label><br>
+                                                    <div class="input-group mb-3"> <select class="custom-select"
+                                                            id="time_z_horaria" name="time_zhoraria">
+                                                            <option value="-12.00">(GMT-12:00) Enewetak, Kwajalein
+                                                            </option>
+                                                            <option value="-11.00">(GMT-11:00) Islas Midway, Samoa
+                                                            </option>
+                                                            <option value="-10.00">(GMT-10:00) Hawái</option>
+                                                            <option value="-9.00">(GMT-09:00) Alaska</option>
+                                                            <option value="-8.00">(GMT-08:00) Hora del Pacífico</option>
+                                                            <option value="-7.00">(GMT-07:00) Hora de las Montañas
+                                                                Rocosas (EE.UU. Y Canadá)</option>
+                                                            <option value="-6.00">(GMT-06:00) Hora Central (EE.UU. y
+                                                                Canadá)</option>
+                                                            <option value="-5.00">(GMT-05:00) Hora del Este (EE.UU. y
+                                                                Canadá)</option>
+                                                            <option value="-4.50">(GMT-04:30) Caracas</option>
+                                                            <option value="-4.00">(GMT-04:00) Hora del Atlántico
+                                                                (Canadá)</option>
+                                                            <option value="-3.50">(GMT-03:30) Terranova</option>
+                                                            <option value="-3.00">(GMT-03:00) Brasilia, Buenos Aires
+                                                            </option>
+                                                            <option value="-2.00">(GMT-02:00) Atlántico Central</option>
+                                                            <option value="-1.00">(GMT-01:00) Azores, Islas de Cabo
+                                                                Verde</option>
+                                                            <option value="0.00">(GMT) Hora Media de Greenwich: Dublín,
+                                                                Londres</option>
+                                                            <option value="1.00">(GMT+01:00) Berlín, Estocolmo, Roma,
+                                                                Berna, Bruselas</option>
+                                                            <option value="2.00">(GMT+02:00) Atenas, Helsinki, Europa
+                                                                del Este, Israel</option>
+                                                            <option value="3.00">(GMT+03:00) Bagdad, Kuwait, Nairobi,
+                                                                Riad, Moscú</option>
+                                                            <option value="3.50">(GMT+03:30) Teherán</option>
+                                                            <option value="4.00">(GMT+04:00) Abu Dabi, Mascate, Kazán,
+                                                                Volgogrado</option>
+                                                            <option value="4.50">(GMT+04:30) Kabul</option>
+                                                            <option value="5.00">(GMT+05:00) Islamabad, Karachi,
+                                                                Ekaterimburgo</option>
+                                                            <option value="5.50">(GMT+05:30) Madrás, Calcuta, Mumbai,
+                                                                Nueva Delhi </option>
+                                                            <option value="5.75">(GMT+05:45) Katmandú</option>
+                                                            <option value="6.00">(GMT+06:00) Alma-Ata, Dhaka</option>
+                                                            <option value="6.50">(GMT+06:30) Rangún</option>
+                                                            <option value="7.00">(GMT+07:00) Bangkok, Yakarta, Hanói
+                                                            </option>
+                                                            <option value="8.00">(GMT+08:00) Pekín, Hong Kong, Perth,
+                                                                Singapur</option>
+                                                            <option value="9.00">(GMT+09:00) Tokio, Osaka, Sapporo,
+                                                                Seúl, Yakutsk</option>
+                                                            <option value="9.50">(GMT+09:30) Adelaida</option>
+                                                            <option value="10.00">(GMT+10:00) Brisbane, Guam, Canberra,
+                                                                Melbourne, Sídney</option>
+                                                            <option value="11.00">(GMT+11:00) Magadan, Islas Salomón,
+                                                                Nueva Caledonia </option>
+                                                            <option value="12.00">(GMT+12:00) Fuji, Kamchatka, Auckland
+                                                            </option>
+                                                            <option value="13.00">(GMT+13:00) Nukualofa</option>
+                                                        </select> </div>
+                                                </div>
+                                                <div class="form-group col-lg-6"> <label for="time_server"
+                                                        class="text-secondary">Servidor NTP:</label><br>
+                                                    <div class="input-group mb-3"> <input type="text"
+                                                            class="form-control" id="time_server" name="time_server"
+                                                            value="#time_server#" placeholder="Ejemplo: time.nist.gov">
+                                                    </div>
+                                                </div>
+                                            </div><br><button type="submit" class="btn btn-success mb-2"> <i
+                                                    class="fa fa-floppy-o"></i> <span> Guardar</span> </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/libscripts.js"></script>
+        <script src="js/vendorscripts.js"></script>
+        <script src="js/sweetalert.js"></script>
+        <script src="js/mainscripts.js "></script>
+        <script src="js/scripts.js "></script>
+</body>
+
+</html>

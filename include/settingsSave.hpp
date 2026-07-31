@@ -112,4 +112,30 @@ boolean settingsSaveMQTT(){
     return false;
   }    
 }
+boolean settinsSaveTimer(){
+    // Guardar la configuración Timer
+    StaticJsonDocument<capacitytimer> jsonConfig;
+    File file = SPIFFS.open(F("/timer.json"), "w+");
+    if (file)
+    {
+        jsonConfig["time_ajuste"] = time_ajuste;
+        jsonConfig["time_date"] = time_date;
+        jsonConfig["time_hr"] = time_hr;
+        jsonConfig["time_mn"] = time_mn;
+        jsonConfig["time_sc"] = time_sc;
+        jsonConfig["time_zhoraria"] = time_zhoraria;
+        jsonConfig["time_server"] = time_server;
+        serializeJsonPretty(jsonConfig, file);
+        file.close();
+        log(F("Info: Timer Guardado"));
+        serializeJsonPretty(jsonConfig, Serial);
+        return true;
+    }
+    else
+    {
+        log(F("Error: Falló guardado json Timer"));
+        return false;
+    }
+    
+}
 

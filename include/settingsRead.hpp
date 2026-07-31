@@ -120,3 +120,34 @@ boolean settingsReadAdmin(){
         return true;
     }
 }
+
+// -----------------------------------------------------------------
+// Leer Timer
+// -----------------------------------------------------------------
+boolean settingsReadTimer(){
+    StaticJsonDocument<capacitytimer> jsonConfig;
+    File file = SPIFFS.open("/timer.json" , "r");
+    if (deserializeJson(jsonConfig, file))
+    {
+        //Si falla la lectura, inicia valores por defecto
+        settingsResetTimer();
+        log("Error: Fallo lectura timer, tomando valores por defecto");
+        return false;
+    }
+    else
+    {
+        /* TIMER */
+        time_ajuste = jsonConfig["time_ajuste"];
+        strlcpy(time_date, jsonConfig["time_date"], sizeof(time_date));
+        time_hr = jsonConfig["time_hr"];
+        time_mn = jsonConfig["time_mn"];
+        time_sc = jsonConfig["time_sc"];
+        setDyMsYr();                        // Asigna los valores de time_date a dy, mt, yr
+        time_zhoraria = jsonConfig["time_zhoraria"];
+        strlcpy(time_server, jsonConfig["time_server"], sizeof(time_server));
+        file.close();
+        log("Info: Lectura correcta del Timer");
+        return true;
+    }
+    
+}
